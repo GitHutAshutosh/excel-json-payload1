@@ -62,10 +62,11 @@ for _, row in df.iterrows():
         matching_rows.append(cleaned)
 
 # Build payload
-if matching_rows:
-    payload = {"importGcrImpactsRequest": {"impacts": matching_rows}}
-else:
-    payload = {"data": cleaned_rows}
+payload = {
+    "importGcrImpactsRequest": {"impacts": matching_rows}
+} if matching_rows else {
+    "data": cleaned_rows
+}
 
 # Save to JSON
 with open("output.json", "w", encoding="utf-8") as f:
