@@ -26,10 +26,11 @@ st.title("Excel to JSON Payload Converter")
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
 # --- Define Existing Code Data for Matching ---
-existing_code_data = [
-    {"sid": "1-E9U2L", "busorgId": "1-E9U2L"},
-    # Add more known entries here if needed
-]
+known_sids = ["1-E9U2L"]
+known_busorg_ids = ["1-E9U2L"]
+
+def is_matching(row):
+    return row.get("sid") in known_sids or row.get("busorgId") in known_busorg_ids
 
 def is_matching(row):
     for code in existing_code_data:
