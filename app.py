@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import json
-from io import BytesIO
 
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
@@ -16,16 +15,27 @@ if not st.session_state.authenticated:
         st.error("Incorrect password")
     st.stop()
 
+# --- Logout Option ---
+if st.button("Logout"):
+    st.session_state.authenticated = False
+    st.rerun()
 
+# --- Main App ---
 st.title("Excel to JSON Payload Converter")
 
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
 if uploaded_file:
-    df = pd.read_excel(uploaded_file)
+    try:
+        df = pd.read_excel(uploaded_file, engine="openpyxl")
+    except Exception as e:
+        st.error(f"Error reading Excel file: {e}")
+        st.stop()
+
     df = df.fillna("null").astype(str)
 
-    column_mapping = {
+    # --- Expected Columns and Mapping ---
+    expected_columns = {
         "SID": "sid",
         "Alt SID": "altSid",
         "Busorg ID": "busorgId",
@@ -44,8 +54,12 @@ if uploaded_file:
         "Notification Name": "notificationName"
     }
 
-    df = df.rename(columns=column_mapping)
+    df = df.rename(columns={k: v for k, v in expected_columns.items() if k in df.columns})
+    for original_col, new_col in expected_columns.items():
+        if new_col not in df.columns:
+            df[new_col] = "null"
 
+    # --- Row Cleaning Function ---
     def clean_row(row):
         if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
             row["busorgId"] = "1-E9U2L"
@@ -59,9 +73,24 @@ if uploaded_file:
                 row[field] = "null"
         return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
-    impacts = [clean_row(row) for _, row in df.iterrows()]
-    payload = {"importGcrImpactsRequest": {"impacts": impacts}}
+    # --- Matching Logic ---
+    def is_matching(row):
+        # Define your matching condition here
+        return row["busorgId"] == "1-E9U2L" or row["sid"] == "1-E9U2L"
 
+    cleaned_rows = []
+    for _, row in df.iterrows():
+        cleaned = clean_row(row)
+        if is_matching(cleaned):
+            cleaned_rows.append(cleaned)
+
+    # --- Build Payload ---
+    if cleaned_rows:
+        payload = {"importGcrImpactsRequest": {"impacts": cleaned_rows}}
+    else:
+        payload = {"message": "No matching data found"}
+
+    # --- Display and Download ---
     st.subheader("Converted JSON Payload")
     st.json(payload)
 
