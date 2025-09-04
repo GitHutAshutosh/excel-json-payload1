@@ -2,12 +2,12 @@ import pandas as pd
 import json
 
 # Load Excel file
-df = pd.read_excel("FRO2003746840 (1).xlsx")
+df = pd.read_excel("FRO2003746840 (1).xlsx", engine="openpyxl")
 
 # Replace NaNs with "null" and convert all to string
 df = df.fillna("null").astype(str)
 
-# Rename columns to match Word file format
+# Rename columns
 column_mapping = {
     "SID": "sid",
     "Alt SID": "altSid",
@@ -27,46 +27,31 @@ column_mapping = {
     "Notification Name": "notificationName"
 }
 
-df = df.rename(columns=column_mapping)
+df = df.rename(columns={k: v for k, v in column_mapping.items() if k in df.columns})
+for original_col, new_col in column_mapping.items():
+    if new_col not in df.columns:
+        df[new_col] = "null"
 
-# Define known matching values
-known_codes = [
-    {"sid": "1-E9U2L", "busorgId": "1-E9U2L"},
-    # Add more known values if needed
-]
+# Known values
+known_sids = ["1-E9U2L"]
+known_busorg_ids = ["1-E9U2L"]
 
-# Clean and match rows
 def clean_row(row):
-    # Fix Busorg ID
-    busorg_id = row.get("busorgId", "")
-    if busorg_id.upper().startswith("NULL") or busorg_id.isnumeric():
+    if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
         row["busorgId"] = "1-E9U2L"
-    
-    # Fix SID
-    sid = row.get("sid", "")
-    if sid.isnumeric():
+    if row.get("sid", "").isnumeric():
         row["sid"] = "1-E9U2L"
-    
-    # Convert 'Protection' to boolean
-    protection = row.get("protection", "null").lower()
-    row["protection"] = protection == "true"
-
-    # Convert numeric fields
+    row["protection"] = row["protection"].lower() == "true"
     for field in ["altAcctId", "orderNum", "tspCode"]:
         try:
             row[field] = int(row[field]) if row[field] != "null" else "null"
         except:
             row[field] = "null"
-
     return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
 def is_matching(row):
-    for code in known_codes:
-        if row.get("sid") == code["sid"] or row.get("busorgId") == code["busorgId"]:
-            return True
-    return False
+    return row.get("sid") in known_sids or row.get("busorgId") in known_busorg_ids
 
-# Process rows
 cleaned_rows = []
 matching_rows = []
 
