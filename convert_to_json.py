@@ -29,7 +29,13 @@ column_mapping = {
 
 df = df.rename(columns=column_mapping)
 
-# Apply custom rules
+# Define known matching values
+known_codes = [
+    {"sid": "1-E9U2L", "busorgId": "1-E9U2L"},
+    # Add more known values if needed
+]
+
+# Clean and match rows
 def clean_row(row):
     # Fix Busorg ID
     busorg_id = row.get("busorgId", "")
@@ -41,12 +47,9 @@ def clean_row(row):
     if sid.isnumeric():
         row["sid"] = "1-E9U2L"
     
-    # Convert 'Protection' to boolean if possible
+    # Convert 'Protection' to boolean
     protection = row.get("protection", "null").lower()
-    if protection in ["true", "false"]:
-        row["protection"] = protection == "true"
-    else:
-        row["protection"] = False
+    row["protection"] = protection == "true"
 
     # Convert numeric fields
     for field in ["altAcctId", "orderNum", "tspCode"]:
@@ -55,18 +58,29 @@ def clean_row(row):
         except:
             row[field] = "null"
 
-    # Final cleanup
     return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
-# Apply to all rows
-impacts = [clean_row(row) for _, row in df.iterrows()]
+def is_matching(row):
+    for code in known_codes:
+        if row.get("sid") == code["sid"] or row.get("busorgId") == code["busorgId"]:
+            return True
+    return False
 
-# Wrap in required structure
-payload = {
-    "importGcrImpactsRequest": {
-        "impacts": impacts
-    }
-}
+# Process rows
+cleaned_rows = []
+matching_rows = []
+
+for _, row in df.iterrows():
+    cleaned = clean_row(row)
+    cleaned_rows.append(cleaned)
+    if is_matching(cleaned):
+        matching_rows.append(cleaned)
+
+# Build payload
+if matching_rows:
+    payload = {"importGcrImpactsRequest": {"impacts": matching_rows}}
+else:
+    payload = {"data": cleaned_rows}
 
 # Save to JSON
 with open("output.json", "w", encoding="utf-8") as f:
