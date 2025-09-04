@@ -86,13 +86,15 @@ if uploaded_file:
         return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
     cleaned_rows = []
+    matching_rows = []
+
     for _, row in df.iterrows():
         cleaned = clean_row(row)
         cleaned_rows.append(cleaned)
+        if is_matching(cleaned):
+            matching_rows.append(cleaned)
 
     # --- Build Payload ---
-    matching_rows = [row for row in cleaned_rows if is_matching(row)]
-
     if matching_rows:
         payload = {"importGcrImpactsRequest": {"impacts": matching_rows}}
     else:
