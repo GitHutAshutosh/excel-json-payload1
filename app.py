@@ -25,6 +25,18 @@ st.title("Excel to JSON Payload Converter")
 
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
+# --- Define Existing Code Data for Matching ---
+existing_code_data = [
+    {"sid": "1-E9U2L", "busorgId": "1-E9U2L"},
+    # Add more known entries here if needed
+]
+
+def is_matching(row):
+    for code in existing_code_data:
+        if row.get("sid") == code["sid"] or row.get("busorgId") == code["busorgId"]:
+            return True
+    return False
+
 if uploaded_file:
     try:
         df = pd.read_excel(uploaded_file, engine="openpyxl")
@@ -73,26 +85,21 @@ if uploaded_file:
                 row[field] = "null"
         return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
-    # --- Matching Logic ---
-    def is_matching(row):
-        # Define your matching condition here
-        return row["busorgId"] == "1-E9U2L" or row["sid"] == "1-E9U2L"
-
     cleaned_rows = []
     for _, row in df.iterrows():
         cleaned = clean_row(row)
-        if is_matching(cleaned):
-            cleaned_rows.append(cleaned)
+        cleaned_rows.append(cleaned)
 
     # --- Build Payload ---
-    if cleaned_rows:
-        payload = {"importGcrImpactsRequest": {"impacts": cleaned_rows}}
+    matching_rows = [row for row in cleaned_rows if is_matching(row)]
+
+    if matching_rows:
+        payload = {"importGcrImpactsRequest": {"impacts": matching_rows}}
     else:
-        payload = {"message": "No matching data found"}
+        payload = {"data": cleaned_rows}
 
     # --- Display and Download ---
     st.subheader("Converted JSON Payload")
     st.json(payload)
 
     json_bytes = json.dumps(payload, indent=4).encode("utf-8")
-    st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
