@@ -25,18 +25,8 @@ st.title("Excel to JSON Payload Converter")
 
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
-# --- Define Existing Code Data for Matching ---
 known_sids = ["1-E9U2L"]
 known_busorg_ids = ["1-E9U2L"]
-
-def is_matching(row):
-    return row.get("sid") in known_sids or row.get("busorgId") in known_busorg_ids
-
-def is_matching(row):
-    for code in existing_code_data:
-        if row.get("sid") == code["sid"] or row.get("busorgId") == code["busorgId"]:
-            return True
-    return False
 
 if uploaded_file:
     try:
@@ -47,7 +37,6 @@ if uploaded_file:
 
     df = df.fillna("null").astype(str)
 
-    # --- Expected Columns and Mapping ---
     expected_columns = {
         "SID": "sid",
         "Alt SID": "altSid",
@@ -72,7 +61,6 @@ if uploaded_file:
         if new_col not in df.columns:
             df[new_col] = "null"
 
-    # --- Row Cleaning Function ---
     def clean_row(row):
         if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
             row["busorgId"] = "1-E9U2L"
@@ -86,6 +74,9 @@ if uploaded_file:
                 row[field] = "null"
         return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
+    def is_matching(row):
+        return row.get("sid") in known_sids or row.get("busorgId") in known_busorg_ids
+
     cleaned_rows = []
     matching_rows = []
 
@@ -95,14 +86,14 @@ if uploaded_file:
         if is_matching(cleaned):
             matching_rows.append(cleaned)
 
-    # --- Build Payload ---
-    if matching_rows:
-        payload = {"importGcrImpactsRequest": {"impacts": matching_rows}}
-    else:
-        payload = {"data": cleaned_rows}
+    payload = {
+        "importGcrImpactsRequest": {"impacts": matching_rows}
+    } if matching_rows else {
+        "data": cleaned_rows
+    }
 
-    # --- Display and Download ---
     st.subheader("Converted JSON Payload")
     st.json(payload)
 
     json_bytes = json.dumps(payload, indent=4).encode("utf-8")
+    st.download_button(label="Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
