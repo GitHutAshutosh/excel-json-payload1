@@ -5,6 +5,29 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
+# --- Moving Payload Converter Line (Always Visible) ---
+st.markdown("""
+<style>
+.marquee {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2196f3;
+    animation: marquee 10s linear infinite;
+    padding: 10px 0;
+    text-align: center;
+}
+@keyframes marquee {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+</style>
+<div class="marquee">🚀 Payload Converter</div>
+""", unsafe_allow_html=True)
+
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -76,14 +99,6 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
-    .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #ffeb3b;
-        text-shadow: 0 0 8px #ffeb3b;
-        margin-bottom: -10px;
-    }
     </style>
     """, unsafe_allow_html=True)
 else:
@@ -102,13 +117,6 @@ else:
     }
     footer {
         color: #555;
-    }
-    .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #1976d2;
-        margin-bottom: -10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -130,11 +138,6 @@ with st.sidebar:
 
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
-
-# --- QA TEAM Banner Above Title ---
-st.markdown("<div class='qa-banner'>QA TEAM</div>", unsafe_allow_html=True)
-
-# --- Title ---
 st.title("📊 Excel to JSON Payload Converter")
 
 # --- Upload Section with Divider Line ---
