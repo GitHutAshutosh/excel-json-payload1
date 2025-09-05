@@ -20,7 +20,7 @@ if st.button("Logout"):
     st.session_state.authenticated = False
     st.rerun()
 
-# --- Main App (Only visible after correct password) ---
+# --- Main App ---
 st.title("Excel to JSON Payload Converter")
 
 # --- File Upload ---
@@ -63,7 +63,7 @@ if uploaded_file:
         if new_col not in df.columns:
             df[new_col] = "null"
 
-    # --- Row Cleaning Function ---
+    # --- Row Cleaning Function for Impact Format ---
     def clean_row(row):
         if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
             row["busorgId"] = "1-E9U2L"
@@ -77,9 +77,12 @@ if uploaded_file:
                 row[field] = "null"
         return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
-    # --- Convert to JSON Payload ---
-    impacts = [clean_row(row) for _, row in df.iterrows()]
-    payload = {"importGcrImpactsRequest": {"impacts": impacts}}
+    # --- Payload Generation ---
+    if "busorgId" in df.columns:
+        impacts = [clean_row(row) for _, row in df.iterrows()]
+        payload = {"importGcrImpactsRequest": {"impacts": impacts}}
+    else:
+        payload = df.to_dict(orient="records")
 
     # --- Display and Download ---
     st.subheader("Converted JSON Payload")
