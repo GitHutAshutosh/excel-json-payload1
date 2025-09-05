@@ -57,7 +57,7 @@ if theme == "Dark":
         background-color: #121212;
         color: #e0e0e0;
     }
-    .sidebar .sidebar-content, .password-box {
+    .sidebar .sidebar-content {
         background-color: #1e1e1e;
         color: #e0e0e0;
     }
@@ -84,7 +84,7 @@ else:
         background-color: #f5f5f5;
         color: #000000;
     }
-    .sidebar .sidebar-content, .password-box {
+    .sidebar .sidebar-content {
         background-color: #ffffff;
         color: #000000;
     }
@@ -116,7 +116,27 @@ with st.sidebar:
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
-uploaded_file = st.file_uploader("📁 Upload your Excel file", type=["xlsx"])
+# --- QA TEAM Branding ---
+if theme == "Dark":
+    st.markdown("""
+    <h2 style='text-align: center; color: #ffeb3b; text-shadow: 0 0 10px #ffeb3b; font-size: 36px;'>
+        QA TEAM
+    </h2>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <h2 style='text-align: center; color: #1976d2; font-size: 36px;'>
+        QA TEAM
+    </h2>
+    """, unsafe_allow_html=True)
+
+# --- Upload Section ---
+if theme == "Dark":
+    st.markdown("<h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>", unsafe_allow_html=True)
+else:
+    st.markdown("📁 Upload your Excel file")
+
+uploaded_file = st.file_uploader("", type=["xlsx"])
 
 if uploaded_file:
     try:
