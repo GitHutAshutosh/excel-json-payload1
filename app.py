@@ -21,6 +21,21 @@ st.markdown("""
         text-align: center;
         margin-top: 50px;
     }
+    .sidebar-content {
+        padding: 10px;
+        background-color: #e3f2fd;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    .sidebar-toggle {
+        font-weight: bold;
+        color: #0d47a1;
+    }
+    .toggle-status {
+        font-size: 14px;
+        margin-top: 10px;
+        color: #1b5e20;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -40,12 +55,19 @@ if not st.session_state.authenticated:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Sidebar Toggle ---
+# --- Sidebar (Collapsible by default using expander) ---
 with st.sidebar:
-    st.header("⚙️ Settings")
-    enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
+    with st.expander("⚙️ Settings", expanded=False):
+        st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
+        enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
+        if enable_impact:
+            st.markdown('<div class="toggle-status">✅ Impact Enabled</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="toggle-status">❌ Impact Disabled</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
     st.markdown("---")
-    if st.button("Logout"):
+    if st.button("🔓 Logout"):
         st.session_state.authenticated = False
         st.rerun()
 
@@ -118,7 +140,4 @@ if uploaded_file:
     st.subheader("📥 Converted JSON Payload")
     st.json(payload)
 
-    json_bytes = json.dumps(payload, indent=4).encode("utf-8")
-    st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
-
-st.markdown('</div>', unsafe_allow_html=True)
+   
