@@ -24,6 +24,7 @@ if not st.session_state.authenticated:
         animation: marquee 10s linear infinite;
         padding: 10px 0;
         text-align: center;
+        margin-top: -10px;
     }
     @keyframes marquee {
         0%   { transform: translateX(100%); }
@@ -41,18 +42,18 @@ if not st.session_state.authenticated:
         color: #000;
     }
     .password-box {
-        background-color: #ffffff;
+        background-color: #e3f2fd;
         padding: 30px;
         border-radius: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border: 2px solid #2196f3;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
         text-align: center;
-        margin-top: 20px;
-        border: 2px solid #007bff;
+        margin-top: -20px;
     }
     .password-box input {
         font-size: 18px !important;
         padding: 10px !important;
-        border: 2px solid #007bff !important;
+        border: 2px solid #2196f3 !important;
         border-radius: 5px !important;
         width: 100% !important;
         color: #000 !important;
