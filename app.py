@@ -5,19 +5,17 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
-# --- QA TEAM Banner at Top ---
+# --- QA TEAM Banner Simulated Top-Center ---
 st.markdown("""
 <style>
 .qa-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    padding: 10px 0;
-    font-size: 32px;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
     font-weight: bold;
-    z-index: 9999;
+    z-index: 1000;
 }
 body {
     padding-top: 60px;
