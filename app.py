@@ -2,17 +2,48 @@ import streamlit as st
 import pandas as pd
 import json
 
+# --- Page Configuration ---
+st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
+
+# --- Custom CSS for Styling ---
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    .password-box {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .toggle-container {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    password = st.text_input("Enter password", type="password")
+    st.markdown('<div class="password-box">', unsafe_allow_html=True)
+    st.header("🔐 Secure Access")
+    password = st.text_input("Enter password to access the app", type="password")
     if password == "Ashutosh@79836666":
         st.session_state.authenticated = True
         st.rerun()
     elif password:
-        st.error("Incorrect password")
+        st.error("❌ Incorrect password. Please try again.")
+    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- Logout Option ---
@@ -21,13 +52,17 @@ if st.button("Logout"):
     st.rerun()
 
 # --- Main App ---
-st.title("Excel to JSON Payload Converter")
+st.markdown('<div class="main">', unsafe_allow_html=True)
+st.title("📊 Excel to JSON Payload Converter")
 
-# --- Integration Toggle ---
-enable_impact = st.toggle("Enable GCR Service Impact")
+# --- Toggle Section ---
+with st.expander("⚙️ Integration Settings"):
+    st.markdown('<div class="toggle-container">', unsafe_allow_html=True)
+    enable_impact = st.toggle("Enable GCR Service Impact")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- File Upload ---
-uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+uploaded_file = st.file_uploader("📁 Upload your Excel file", type=["xlsx"])
 
 if uploaded_file:
     try:
@@ -88,8 +123,10 @@ if uploaded_file:
         payload = df.to_dict(orient="records")
 
     # --- Display and Download ---
-    st.subheader("Converted JSON Payload")
+    st.subheader("📥 Converted JSON Payload")
     st.json(payload)
 
     json_bytes = json.dumps(payload, indent=4).encode("utf-8")
     st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
+
+st.markdown('</div>', unsafe_allow_html=True)
