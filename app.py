@@ -5,6 +5,26 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
+# --- QA TEAM Banner at Top ---
+st.markdown("""
+<style>
+.qa-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 32px;
+    font-weight: bold;
+    z-index: 9999;
+}
+body {
+    padding-top: 60px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -48,6 +68,13 @@ if not st.session_state.authenticated:
 
 # --- Theme Toggle (Only after login) ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
+st.session_state.theme = theme
+
+# --- Inject QA TEAM Banner Based on Theme ---
+if theme == "Dark":
+    st.markdown("<div class='qa-banner' style='color: #ffeb3b; text-shadow: 0 0 10px #ffeb3b;'>QA TEAM</div>", unsafe_allow_html=True)
+else:
+    st.markdown("<div class='qa-banner' style='color: #1976d2;'>QA TEAM</div>", unsafe_allow_html=True)
 
 # --- Apply Theme Styling ---
 if theme == "Dark":
@@ -75,22 +102,7 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
-    .qa-banner {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        padding: 10px 0;
-        font-size: 32px;
-        font-weight: bold;
-        color: #ffeb3b;
-        text-shadow: 0 0 10px #ffeb3b;
-        background-color: transparent;
-        z-index: 9999;
-    }
     </style>
-    <div class="qa-banner">QA TEAM</div>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
@@ -109,21 +121,7 @@ else:
     footer {
         color: #555;
     }
-    .qa-banner {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        padding: 10px 0;
-        font-size: 32px;
-        font-weight: bold;
-        color: #1976d2;
-        background-color: transparent;
-        z-index: 9999;
-    }
     </style>
-    <div class="qa-banner">QA TEAM</div>
     """, unsafe_allow_html=True)
 
 # --- Sidebar ---
