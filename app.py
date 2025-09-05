@@ -3,7 +3,7 @@ import pandas as pd
 import json
 
 # --- Page Configuration ---
-st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
+st.set_page_config(page_title="Excel to JSON Converter", layout="wide")
 
 # --- Custom CSS for Styling ---
 st.markdown("""
@@ -19,13 +19,7 @@ st.markdown("""
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
         text-align: center;
-    }
-    .toggle-container {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        margin-top: 50px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -46,24 +40,18 @@ if not st.session_state.authenticated:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Logout Option ---
-if st.button("Logout"):
-    st.session_state.authenticated = False
-    st.rerun()
+# --- Sidebar Toggle ---
+with st.sidebar:
+    st.header("⚙️ Settings")
+    enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
+    st.markdown("---")
+    if st.button("Logout"):
+        st.session_state.authenticated = False
+        st.rerun()
 
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
-
-# --- Toggle Section ---
-with st.expander("⚙️ Integration Settings"):
-    st.markdown('<div class="toggle-container">', unsafe_allow_html=True)
-    enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
-    if enable_impact:
-        st.success("✅ GCR Service Impact is enabled.")
-    else:
-        st.info("ℹ️ GCR Service Impact is disabled.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- File Upload ---
 uploaded_file = st.file_uploader("📁 Upload your Excel file", type=["xlsx"])
