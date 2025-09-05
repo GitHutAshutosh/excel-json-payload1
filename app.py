@@ -58,7 +58,11 @@ st.title("📊 Excel to JSON Payload Converter")
 # --- Toggle Section ---
 with st.expander("⚙️ Integration Settings"):
     st.markdown('<div class="toggle-container">', unsafe_allow_html=True)
-    enable_impact = st.toggle("Enable GCR Service Impact")
+    enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
+    if enable_impact:
+        st.success("✅ GCR Service Impact is enabled.")
+    else:
+        st.info("ℹ️ GCR Service Impact is disabled.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- File Upload ---
