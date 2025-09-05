@@ -10,6 +10,29 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
+    # Moving Payload Converter Line (only on password page)
+    st.markdown("""
+    <style>
+    .marquee {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        font-size: 24px;
+        font-weight: bold;
+        color: #2196f3;
+        animation: marquee 10s linear infinite;
+        padding: 10px 0;
+        text-align: center;
+    }
+    @keyframes marquee {
+        0%   { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    </style>
+    <div class="marquee">🚀 Payload Converter</div>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <style>
     body, .stApp {
@@ -30,9 +53,17 @@ if not st.session_state.authenticated:
         margin-top: 10px;
         text-align: center;
     }
+    .qa-banner {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
+    st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
     st.markdown('<div class="password-box">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
@@ -76,21 +107,13 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
-    .marquee {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        box-sizing: border-box;
-        font-size: 24px;
+    .qa-banner {
+        text-align: center;
+        font-size: 28px;
         font-weight: bold;
         color: #ffeb3b;
-        animation: marquee 10s linear infinite;
-        padding: 10px 0;
-        text-align: center;
-    }
-    @keyframes marquee {
-        0%   { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+        text-shadow: 0 0 8px #ffeb3b;
+        margin-bottom: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -111,21 +134,12 @@ else:
     footer {
         color: #555;
     }
-    .marquee {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        box-sizing: border-box;
-        font-size: 24px;
+    .qa-banner {
+        text-align: center;
+        font-size: 28px;
         font-weight: bold;
         color: #1976d2;
-        animation: marquee 10s linear infinite;
-        padding: 10px 0;
-        text-align: center;
-    }
-    @keyframes marquee {
-        0%   { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+        margin-bottom: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -147,10 +161,7 @@ with st.sidebar:
 
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
-
-# --- Moving Line (Only after login) ---
-st.markdown('<div class="marquee">🚀 Payload Converter</div>', unsafe_allow_html=True)
-
+st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
 # --- Upload Section ---
