@@ -41,22 +41,29 @@ if not st.session_state.authenticated:
         background-color: #f5f5f5;
         color: #000;
     }
+    .qa-banner {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #1976d2;
+        margin-bottom: 0px;
+    }
     .password-box {
         background-color: #e3f2fd;
-        padding: 30px;
+        padding: 25px;
         border-radius: 10px;
         border: 2px solid #2196f3;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
         text-align: center;
-        margin-top: -20px;
+        margin-top: -10px;
     }
-    .password-box input {
+    .stTextInput > div > input {
         font-size: 18px !important;
         padding: 10px !important;
         border: 2px solid #2196f3 !important;
         border-radius: 5px !important;
-        width: 100% !important;
         color: #000 !important;
+        background-color: #ffffff !important;
     }
     footer {
         font-size: 16px;
@@ -64,17 +71,11 @@ if not st.session_state.authenticated:
         margin-top: 10px;
         text-align: center;
     }
-    .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #1976d2;
-        margin-bottom: 10px;
-    }
     </style>
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
+    st.markdown('<div class="password-box">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
     password = st.text_input("Type your Access Password", type="password")
