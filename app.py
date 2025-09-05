@@ -1,33 +1,9 @@
 import streamlit as st
 import pandas as pd
 import json
-from streamlit_globe import streamlit_globe
 
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
-
-# --- Moving Payload Converter Line ---
-st.markdown("""
-<style>
-.marquee {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    box-sizing: border-box;
-    font-size: 24px;
-    font-weight: bold;
-    color: #2196f3;
-    animation: marquee 10s linear infinite;
-    padding: 10px 0;
-    text-align: center;
-}
-@keyframes marquee {
-    0%   { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-</style>
-<div class="marquee">🚀 Payload Converter</div>
-""", unsafe_allow_html=True)
 
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
@@ -100,6 +76,22 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
+    .marquee {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        font-size: 24px;
+        font-weight: bold;
+        color: #ffeb3b;
+        animation: marquee 10s linear infinite;
+        padding: 10px 0;
+        text-align: center;
+    }
+    @keyframes marquee {
+        0%   { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
     </style>
     """, unsafe_allow_html=True)
 else:
@@ -118,6 +110,22 @@ else:
     }
     footer {
         color: #555;
+    }
+    .marquee {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        font-size: 24px;
+        font-weight: bold;
+        color: #1976d2;
+        animation: marquee 10s linear infinite;
+        padding: 10px 0;
+        text-align: center;
+    }
+    @keyframes marquee {
+        0%   { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -139,19 +147,11 @@ with st.sidebar:
 
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
-st.title("📊 Excel to JSON Payload Converter")
 
-# --- Globe Animation ---
-st.subheader("🌐 Welcome to the Globe View")
-pointsData = [
-    {'lat': 28.6139, 'lng': 77.2090, 'size': 0.5, 'color': 'red'},  # Delhi
-    {'lat': 37.7749, 'lng': -122.4194, 'size': 0.5, 'color': 'blue'},  # San Francisco
-]
-labelsData = [
-    {'lat': 28.6139, 'lng': 77.2090, 'size': 0.5, 'color': 'red', 'text': 'Bangalore'},
-    {'lat': 37.7749, 'lng': -122.4194, 'size': 0.5, 'color': 'blue', 'text': 'GitHub'},
-]
-streamlit_globe(pointsData=pointsData, labelsData=labelsData, daytime='night', width=800, height=500)
+# --- Moving Line (Only after login) ---
+st.markdown('<div class="marquee">🚀 Payload Converter</div>', unsafe_allow_html=True)
+
+st.title("📊 Excel to JSON Payload Converter")
 
 # --- Upload Section ---
 if theme == "Dark":
