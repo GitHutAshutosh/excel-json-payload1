@@ -130,11 +130,19 @@ else:
     </h2>
     """, unsafe_allow_html=True)
 
-# --- Upload Section ---
+# --- Upload Section with Divider Line ---
 if theme == "Dark":
-    st.markdown("<h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
+        <h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>
+    </div>
+    """, unsafe_allow_html=True)
 else:
-    st.markdown("📁 Upload your Excel file")
+    st.markdown("""
+    <div style="border-top: 1px solid #ccc; margin-top: 30px; padding-top: 10px;">
+        <h4 style='color: #000;'>📁 Upload your Excel file</h4>
+    </div>
+    """, unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("", type=["xlsx"])
 
