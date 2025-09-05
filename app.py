@@ -19,7 +19,7 @@ st.markdown("""
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     text-align: center;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 .sidebar .sidebar-content {
     background-color: #e3f2fd;
@@ -51,8 +51,10 @@ if "authenticated" not in st.session_state:
 
 if not st.session_state.authenticated:
     st.markdown('<div class="password-box">', unsafe_allow_html=True)
+    st.subheader("👋 Welcome!")
+    st.caption("Please enter your access password below to continue.")
     st.header("🔐 Secure Access")
-    password = st.text_input("Enter password to access the app", type="password")
+    password = st.text_input("Enter Access Password", type="password")
     if password == "Ashutosh@79836666":
         st.session_state.authenticated = True
         st.rerun()
