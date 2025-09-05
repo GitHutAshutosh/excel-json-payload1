@@ -33,6 +33,7 @@ if not st.session_state.authenticated:
     <div class="marquee">🚀 Payload Converter</div>
     """, unsafe_allow_html=True)
 
+    # Styling for password box and input
     st.markdown("""
     <style>
     body, .stApp {
@@ -43,9 +44,18 @@ if not st.session_state.authenticated:
         background-color: #ffffff;
         padding: 30px;
         border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
         text-align: center;
         margin-top: 20px;
+        border: 2px solid #007bff;
+    }
+    .password-box input {
+        font-size: 18px !important;
+        padding: 10px !important;
+        border: 2px solid #007bff !important;
+        border-radius: 5px !important;
+        width: 100% !important;
+        color: #000 !important;
     }
     footer {
         font-size: 16px;
