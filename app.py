@@ -54,24 +54,29 @@ if not st.session_state.authenticated:
         color: #0d47a1 !important;
     }
 
-    /* Highlighted password input box */
+    /* DEFAULT STATE — highlight BEFORE typing/clicking */
     .auth .stTextInput input {
         font-size: 18px !important;
         padding: 12px 14px !important;
-        border: 2px solid #1e88e5 !important;
+        border: 2px solid #1e88e5 !important;       /* blue border by default */
         border-radius: 12px !important;
         background: #ffffff !important;
         color: #0a0a0a !important;
-        box-shadow: 0 8px 20px rgba(30,136,229,.08) !important;
+        /* subtle blue glow by default to make it stand out before typing */
+        box-shadow:
+            0 8px 20px rgba(30,136,229,.08),
+            0 0 0 3px rgba(30,136,229,.12) !important;
         transition: box-shadow .2s ease, border-color .2s ease !important;
     }
-    /* Focus glow */
-    .auth .stTextInput input:focus {
+
+    /* FOCUS or HAS VALUE — change to green accent once user interacts/types */
+    .auth .stTextInput input:focus,
+    .auth .stTextInput input:not(:placeholder-shown) {
         outline: none !important;
-        border-color: #1565c0 !important;
+        border-color: #43a047 !important; /* professional green */
         box-shadow:
-            0 10px 24px rgba(21,101,192,.15),
-            0 0 0 4px rgba(21,101,192,.12) !important;
+            0 10px 24px rgba(67,160,71,.15),
+            0 0 0 4px rgba(67,160,71,.14) !important;
     }
 
     /* Footer – clean & professional */
@@ -83,10 +88,14 @@ if not st.session_state.authenticated:
     }
     .app-footer .divider {
         height: 1px;
-        width: 120px;
+        width: 160px;
         margin: 12px auto 8px;
         background: linear-gradient(90deg, transparent, #bbb, transparent);
         border-radius: 1px;
+    }
+    .app-footer .meta {
+        font-size: 13px;
+        color: #555;
     }
     </style>
     <div class="marquee">🚀 Payload Converter</div>
@@ -99,7 +108,7 @@ if not st.session_state.authenticated:
     st.header("🔐 Secure Access")
 
     # Highlighted password input (styled via CSS above)
-    password = st.text_input("Type your Access Password", type="password")
+    password = st.text_input("Type your Access Password", type="password", placeholder="Enter your password")
 
     if password == "Ashutosh@79836666":
         st.session_state.authenticated = True
@@ -111,7 +120,7 @@ if not st.session_state.authenticated:
     st.markdown("""
         <div class="app-footer">
             <div class="divider"></div>
-            © 2025 QA TEAM • Developed by <strong>Ashutosh Rana</strong> ❤️ • v1.0
+            <div class="meta">© 2025 <strong>QA TEAM</strong> • Developed by <strong>Ashutosh Rana</strong> ❤️ • v1.0</div>
         </div>
     """, unsafe_allow_html=True)
 
