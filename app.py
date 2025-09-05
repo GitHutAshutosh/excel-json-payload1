@@ -24,71 +24,102 @@ if not st.session_state.authenticated:
         animation: marquee 10s linear infinite;
         padding: 10px 0;
         text-align: center;
-        margin-top: -10px;
+        margin-top: -6px;
     }
     @keyframes marquee {
         0%   { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
     }
+
+    /* Global page base for password screen */
+    body, .stApp { background-color: #f5f5f5; color: #000; }
+
+    /* QA TEAM heading */
+    .qa-banner {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 800;
+        color: #1976d2;
+        letter-spacing: .5px;
+        margin: 2px 0 6px 0;
+    }
+
+    /* Auth area tweaks (move a bit upward, center the field) */
+    .auth { margin-top: -8px; }
+    .auth .stTextInput { max-width: 520px; margin: 2px auto 8px auto; }
+
+    /* Make the "Type your Access Password" label clearer */
+    .auth label {
+        font-weight: 600 !important;
+        color: #0d47a1 !important;
+    }
+
+    /* Highlighted password input box */
+    .auth .stTextInput input {
+        font-size: 18px !important;
+        padding: 12px 14px !important;
+        border: 2px solid #1e88e5 !important;
+        border-radius: 12px !important;
+        background: #ffffff !important;
+        color: #0a0a0a !important;
+        box-shadow: 0 8px 20px rgba(30,136,229,.08) !important;
+        transition: box-shadow .2s ease, border-color .2s ease !important;
+    }
+    /* Focus glow */
+    .auth .stTextInput input:focus {
+        outline: none !important;
+        border-color: #1565c0 !important;
+        box-shadow:
+            0 10px 24px rgba(21,101,192,.15),
+            0 0 0 4px rgba(21,101,192,.12) !important;
+    }
+
+    /* Footer – clean & professional */
+    .app-footer {
+        margin-top: 18px;
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+    }
+    .app-footer .divider {
+        height: 1px;
+        width: 120px;
+        margin: 12px auto 8px;
+        background: linear-gradient(90deg, transparent, #bbb, transparent);
+        border-radius: 1px;
+    }
     </style>
     <div class="marquee">🚀 Payload Converter</div>
     """, unsafe_allow_html=True)
 
-    # Styling for password box and input
-    st.markdown("""
-    <style>
-    body, .stApp {
-        background-color: #f5f5f5;
-        color: #000;
-    }
-    .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #1976d2;
-        margin-bottom: 0px;
-    }
-    .password-box {
-        background-color: #e3f2fd;
-        padding: 25px;
-        border-radius: 10px;
-        border: 2px solid #2196f3;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        text-align: center;
-        margin-top: -10px;
-    }
-    .stTextInput > div > input {
-        font-size: 18px !important;
-        padding: 10px !important;
-        border: 2px solid #2196f3 !important;
-        border-radius: 5px !important;
-        color: #000 !important;
-        background-color: #ffffff !important;
-    }
-    footer {
-        font-size: 16px;
-        color: #555;
-        margin-top: 10px;
-        text-align: center;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    # Header + Auth UI (NO extra box under QA TEAM)
     st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
-
-    
+    st.markdown('<div class="auth">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
+
+    # Highlighted password input (styled via CSS above)
     password = st.text_input("Type your Access Password", type="password")
+
     if password == "Ashutosh@79836666":
         st.session_state.authenticated = True
         st.rerun()
     elif password:
         st.error("❌ Incorrect password. Please try again.")
-    st.markdown('<footer>Developed by Ashutosh Rana ❤️</footer>', unsafe_allow_html=True)
+
+    # Footer (clean + professional)
+    st.markdown("""
+        <div class="app-footer">
+            <div class="divider"></div>
+            © 2025 QA TEAM • Developed by <strong>Ashutosh Rana</strong> ❤️ • v1.0
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Close auth container
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Theme Toggle ---
+# --- Theme Toggle (only after login) ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
 st.session_state.theme = theme
 
@@ -96,61 +127,28 @@ st.session_state.theme = theme
 if theme == "Dark":
     st.markdown("""
     <style>
-    body, .main, .stApp {
-        background-color: #121212;
-        color: #e0e0e0;
-    }
-    .sidebar .sidebar-content {
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-    }
-    .toggle-status {
-        color: #81c784;
-    }
-    .stTextInput > div > input {
-        background-color: #2c2c2c;
-        color: #e0e0e0;
-    }
-    .stDownloadButton button {
-        background-color: #333;
-        color: #fff;
-    }
-    footer {
-        color: #aaa;
-    }
+    body, .main, .stApp { background-color: #121212; color: #e0e0e0; }
+    .sidebar .sidebar-content { background-color: #1e1e1e; color: #e0e0e0; }
+    .toggle-status { color: #81c784; }
+    .stTextInput > div > input { background-color: #2c2c2c; color: #e0e0e0; }
+    .stDownloadButton button { background-color: #333; color: #fff; }
+    footer { color: #aaa; }
     .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #ffeb3b;
-        text-shadow: 0 0 8px #ffeb3b;
-        margin-bottom: 10px;
+        text-align: center; font-size: 28px; font-weight: 800;
+        color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b; margin-bottom: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
     <style>
-    body, .main, .stApp {
-        background-color: #f5f5f5;
-        color: #000000;
-    }
-    .sidebar .sidebar-content {
-        background-color: #ffffff;
-        color: #000000;
-    }
-    .toggle-status {
-        color: #1b5e20;
-    }
-    footer {
-        color: #555;
-    }
+    body, .main, .stApp { background-color: #f5f5f5; color: #000; }
+    .sidebar .sidebar-content { background-color: #ffffff; color: #000; }
+    .toggle-status { color: #1b5e20; }
+    footer { color: #555; }
     .qa-banner {
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        color: #1976d2;
-        margin-bottom: 10px;
+        text-align: center; font-size: 28px; font-weight: 800;
+        color: #1976d2; margin-bottom: 10px; letter-spacing: .5px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -252,5 +250,3 @@ if uploaded_file:
     if st.button("🧹 Clear Uploaded File"):
         st.session_state.clear()
         st.rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
