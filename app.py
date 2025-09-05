@@ -38,6 +38,7 @@ footer {
     font-size: 16px;
     color: #555;
     margin-top: 10px;
+    text-align: center;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -60,7 +61,7 @@ if not st.session_state.authenticated:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Sidebar (Collapsed by default using expander) ---
+# --- Sidebar ---
 with st.sidebar:
     with st.expander("⚙️ GCR Settings", expanded=False):
         st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
@@ -70,6 +71,8 @@ with st.sidebar:
         else:
             st.markdown('<div class="toggle-status">❌ Impact Disabled</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
+    theme = st.radio("🎨 Theme", ["Light", "Dark"], index=0)
     if st.button("🔓 Logout"):
         st.session_state.authenticated = False
         st.rerun()
@@ -77,6 +80,7 @@ with st.sidebar:
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
+
 uploaded_file = st.file_uploader("📁 Upload your Excel file", type=["xlsx"])
 
 if uploaded_file:
@@ -87,6 +91,9 @@ if uploaded_file:
         st.stop()
 
     df = df.fillna("null").astype(str)
+
+    st.subheader("🔍 Preview Excel Data")
+    st.dataframe(df.head(10), use_container_width=True)
 
     if enable_impact:
         expected_columns = {
@@ -118,11 +125,25 @@ if uploaded_file:
         impacts = [clean_row(row) for _, row in df.iterrows()]
         payload = {"importGcrImpactsRequest": {"impacts": impacts}}
     else:
+        st.subheader("🛠️ Optional: Map Columns to JSON Keys")
+        column_mapping = {}
+        for col in df.columns:
+            new_key = st.text_input(f"Map column '{col}' to JSON key", value=col)
+            column_mapping[col] = new_key
+        df = df.rename(columns=column_mapping)
         payload = df.to_dict(orient="records")
 
     st.subheader("📥 Converted JSON Payload")
     st.json(payload)
-    json_bytes = json.dumps(payload, indent=4).encode("utf-8")
-    st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
+
+    try:
+        json_bytes = json.dumps(payload, indent=4).encode("utf-8")
+        st.download_button("📥 Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
+    except Exception as e:
+        st.error(f"Error generating JSON: {e}")
+
+    if st.button("🧹 Clear Uploaded File"):
+        st.session_state.clear()
+        st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
