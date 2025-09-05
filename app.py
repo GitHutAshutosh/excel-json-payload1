@@ -142,9 +142,33 @@ if theme == "Dark":
     .stTextInput > div > input { background-color: #2c2c2c; color: #e0e0e0; }
     .stDownloadButton button { background-color: #333; color: #fff; }
     footer { color: #aaa; }
+
+    /* QA TEAM in dark */
     .qa-banner {
         text-align: center; font-size: 28px; font-weight: 800;
         color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b; margin-bottom: 10px;
+    }
+
+    /* --- NEW: Glow Blue for Map Columns title (dark mode only) --- */
+    .map-columns-title {
+        color: #64b5f6;
+        text-shadow: 0 0 8px #64b5f6, 0 0 16px rgba(100,181,246,.55);
+        font-weight: 800;
+        letter-spacing: .2px;
+        margin: 8px 0 6px;
+    }
+
+    /* --- NEW: Sheet Name Badge with glow (dark mode only) --- */
+    .sheet-badge {
+        display: inline-block;
+        margin: 6px 0 14px 0;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid #64b5f6;
+        color: #bbdefb;
+        background: rgba(25,118,210,.15);
+        box-shadow: 0 0 12px rgba(100,181,246,.65);
+        font-weight: 700;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -155,9 +179,29 @@ else:
     .sidebar .sidebar-content { background-color: #ffffff; color: #000; }
     .toggle-status { color: #1b5e20; }
     footer { color: #555; }
+
+    /* QA TEAM in light */
     .qa-banner {
         text-align: center; font-size: 28px; font-weight: 800;
         color: #1976d2; margin-bottom: 10px; letter-spacing: .5px;
+    }
+
+    /* Light mode – keep clean without glow */
+    .map-columns-title {
+        color: #0d47a1;
+        font-weight: 800;
+        letter-spacing: .2px;
+        margin: 8px 0 6px;
+    }
+    .sheet-badge {
+        display: inline-block;
+        margin: 6px 0 14px 0;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid #90caf9;
+        color: #0d47a1;
+        background: #e3f2fd;
+        font-weight: 700;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -181,34 +225,29 @@ with st.sidebar:
 st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
-# --- Upload Section ---
-if theme == "Dark":
-    st.markdown("""
-    <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
-        <h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>
-    </div>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <div style="border-top: 1px solid #ccc; margin-top: 30px; padding-top: 10px;">
-        <h4 style='color: #000;'>📁 Upload your Excel file</h4>
-    </div>
-    """, unsafe_allow_html=True)
-
+# --- File Upload ---
 uploaded_file = st.file_uploader("", type=["xlsx"])
 
 if uploaded_file:
+    # Get sheet name(s) and parse first sheet
     try:
-        df = pd.read_excel(uploaded_file, engine="openpyxl")
+        xls = pd.ExcelFile(uploaded_file)
+        sheet_names = xls.sheet_names
+        first_sheet = sheet_names[0] if sheet_names else "Sheet1"
+        df = xls.parse(first_sheet)
     except Exception as e:
         st.error(f"Error reading Excel file: {e}")
         st.stop()
+
+    # --- NEW: Show sheet name as a glowy badge (dark mode only; styled via CSS) ---
+    st.markdown(f"<div class='sheet-badge'>📄 Sheet: <strong>{first_sheet}</strong></div>", unsafe_allow_html=True)
 
     df = df.fillna("null").astype(str)
 
     st.subheader("🔍 Preview Excel Data")
     st.dataframe(df.head(10), use_container_width=True)
 
+    # --- Impact payload path ---
     if enable_impact:
         expected_columns = {
             "SID": "sid", "Alt SID": "altSid", "Busorg ID": "busorgId", "Busorg Name": "busorgName",
@@ -224,25 +263,28 @@ if uploaded_file:
                 df[new_col] = "null"
 
         def clean_row(row):
-            if pd.isna(row.get("busorgId")) or str(row["busorgId"]).lower().startswith("null") or row["busorgId"].isnumeric():
+            # Normalize values per your earlier rules
+            if pd.isna(row.get("busorgId")) or str(row["busorgId"]).lower().startswith("null") or str(row["busorgId"]).isnumeric():
                 row["busorgId"] = "1-E9U2L"
-            if row.get("sid", "").isnumeric():
+            if str(row.get("sid", "")).isnumeric():
                 row["sid"] = "1-E9U2L"
-            row["protection"] = row["protection"].lower() == "true"
+            row["protection"] = str(row["protection"]).lower() == "true"
             for field in ["altAcctId", "orderNum", "tspCode"]:
                 try:
                     row[field] = int(row[field]) if row[field] != "null" else "null"
-                except:
+                except Exception:
                     row[field] = "null"
             return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
         impacts = [clean_row(row) for _, row in df.iterrows()]
         payload = {"importGcrImpactsRequest": {"impacts": impacts}}
     else:
-        st.subheader("🛠️ Optional: Map Columns to JSON Keys")
+        # --- NEW: Glow blue heading for Map Columns (dark mode only; CSS above) ---
+        st.markdown("<h3 class='map-columns-title'>🛠️ Optional: Map Columns to JSON Keys</h3>", unsafe_allow_html=True)
+
         column_mapping = {}
         for col in df.columns:
-            new_key = st.text_input(f"Map column '{col}' to JSON key", value=col)
+            new_key = st.text_input(f"Map column '{col}' to JSON key", value=col, key=f"map_{col}")
             column_mapping[col] = new_key
         df = df.rename(columns=column_mapping)
         payload = df.to_dict(orient="records")
@@ -259,3 +301,17 @@ if uploaded_file:
     if st.button("🧹 Clear Uploaded File"):
         st.session_state.clear()
         st.rerun()
+else:
+    # Upload section divider/title (unchanged)
+    if theme == "Dark":
+        st.markdown("""
+        <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
+            <h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="border-top: 1px solid #ccc; margin-top: 30px; padding-top: 10px;">
+            <h4 style='color: #000;'>📁 Upload your Excel file</h4>
+        </div>
+        """, unsafe_allow_html=True)
