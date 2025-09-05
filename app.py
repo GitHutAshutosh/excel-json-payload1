@@ -5,24 +5,6 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
-# --- QA TEAM Banner Simulated Top-Center ---
-st.markdown("""
-<style>
-.qa-banner {
-    position: fixed;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
-    font-weight: bold;
-    z-index: 9999;
-}
-body {
-    padding-top: 60px;
-}
-</style>
-""", unsafe_allow_html=True)
-
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -64,15 +46,9 @@ if not st.session_state.authenticated:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Theme Toggle (Only after login) ---
+# --- Theme Toggle ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
 st.session_state.theme = theme
-
-# --- Inject QA TEAM Banner Based on Theme ---
-if theme == "Dark":
-    st.markdown("<div class='qa-banner' style='color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b;'>QA TEAM</div>", unsafe_allow_html=True)
-else:
-    st.markdown("<div class='qa-banner' style='color: #1976d2;'>QA TEAM</div>", unsafe_allow_html=True)
 
 # --- Apply Theme Styling ---
 if theme == "Dark":
@@ -100,6 +76,20 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
+    .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .qa-team {
+        flex-grow: 1;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #ffeb3b;
+        text-shadow: 0 0 8px #ffeb3b;
+    }
     </style>
     """, unsafe_allow_html=True)
 else:
@@ -118,6 +108,19 @@ else:
     }
     footer {
         color: #555;
+    }
+    .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .qa-team {
+        flex-grow: 1;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #1976d2;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -139,7 +142,14 @@ with st.sidebar:
 
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
-st.title("📊 Excel to JSON Payload Converter")
+
+# --- Title Row with QA TEAM ---
+st.markdown("""
+<div class="title-row">
+    <h1>📊 Excel to JSON Payload Converter</h1>
+    <div class="qa-team">QA TEAM</div>
+</div>
+""", unsafe_allow_html=True)
 
 # --- Upload Section with Divider Line ---
 if theme == "Dark":
