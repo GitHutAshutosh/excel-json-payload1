@@ -75,7 +75,6 @@ if not st.session_state.authenticated:
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
-    st.markdown('<div class="password-box">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
     password = st.text_input("Type your Access Password", type="password")
@@ -171,7 +170,6 @@ with st.sidebar:
         st.rerun()
 
 # --- Main App ---
-st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
