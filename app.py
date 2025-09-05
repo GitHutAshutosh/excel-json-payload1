@@ -9,13 +9,13 @@ st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 st.markdown("""
 <style>
 .qa-banner {
-    position: absolute;
-    top: 10px;
+    position: fixed;
+    top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
-    z-index: 1000;
+    z-index: 9999;
 }
 body {
     padding-top: 60px;
@@ -70,7 +70,7 @@ st.session_state.theme = theme
 
 # --- Inject QA TEAM Banner Based on Theme ---
 if theme == "Dark":
-    st.markdown("<div class='qa-banner' style='color: #ffeb3b; text-shadow: 0 0 10px #ffeb3b;'>QA TEAM</div>", unsafe_allow_html=True)
+    st.markdown("<div class='qa-banner' style='color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b;'>QA TEAM</div>", unsafe_allow_html=True)
 else:
     st.markdown("<div class='qa-banner' style='color: #1976d2;'>QA TEAM</div>", unsafe_allow_html=True)
 
