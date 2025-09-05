@@ -75,7 +75,22 @@ if theme == "Dark":
     footer {
         color: #aaa;
     }
+    .qa-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 32px;
+        font-weight: bold;
+        color: #ffeb3b;
+        text-shadow: 0 0 10px #ffeb3b;
+        background-color: transparent;
+        z-index: 9999;
+    }
     </style>
+    <div class="qa-banner">QA TEAM</div>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
@@ -94,7 +109,21 @@ else:
     footer {
         color: #555;
     }
+    .qa-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 32px;
+        font-weight: bold;
+        color: #1976d2;
+        background-color: transparent;
+        z-index: 9999;
+    }
     </style>
+    <div class="qa-banner">QA TEAM</div>
     """, unsafe_allow_html=True)
 
 # --- Sidebar ---
@@ -115,20 +144,6 @@ with st.sidebar:
 # --- Main App ---
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
-
-# --- QA TEAM Branding ---
-if theme == "Dark":
-    st.markdown("""
-    <h2 style='text-align: center; color: #ffeb3b; text-shadow: 0 0 10px #ffeb3b; font-size: 36px;'>
-        QA TEAM
-    </h2>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <h2 style='text-align: center; color: #1976d2; font-size: 36px;'>
-        QA TEAM
-    </h2>
-    """, unsafe_allow_html=True)
 
 # --- Upload Section with Divider Line ---
 if theme == "Dark":
