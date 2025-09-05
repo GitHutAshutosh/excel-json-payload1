@@ -54,7 +54,7 @@ if not st.session_state.authenticated:
     st.subheader("👋 Welcome!")
     st.caption("Please enter your access password below to continue.")
     st.header("🔐 Secure Access")
-    password = st.text_input("Enter Access Password", type="password")
+    password = st.text_input("Type your Access Password", type="password")
     if password == "Ashutosh@79836666":
         st.session_state.authenticated = True
         st.rerun()
