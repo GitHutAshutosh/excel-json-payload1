@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import json
+from streamlit_globe import streamlit_globe
 
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
-# --- Moving Payload Converter Line (Always Visible) ---
+# --- Moving Payload Converter Line ---
 st.markdown("""
 <style>
 .marquee {
@@ -140,7 +141,19 @@ with st.sidebar:
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
-# --- Upload Section with Divider Line ---
+# --- Globe Animation ---
+st.subheader("🌐 Welcome to the Globe View")
+pointsData = [
+    {'lat': 28.6139, 'lng': 77.2090, 'size': 0.5, 'color': 'red'},  # Delhi
+    {'lat': 37.7749, 'lng': -122.4194, 'size': 0.5, 'color': 'blue'},  # San Francisco
+]
+labelsData = [
+    {'lat': 28.6139, 'lng': 77.2090, 'size': 0.5, 'color': 'red', 'text': 'Bangalore'},
+    {'lat': 37.7749, 'lng': -122.4194, 'size': 0.5, 'color': 'blue', 'text': 'GitHub'},
+]
+streamlit_globe(pointsData=pointsData, labelsData=labelsData, daytime='night', width=800, height=500)
+
+# --- Upload Section ---
 if theme == "Dark":
     st.markdown("""
     <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
