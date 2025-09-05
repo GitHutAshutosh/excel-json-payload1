@@ -23,6 +23,9 @@ if st.button("Logout"):
 # --- Main App ---
 st.title("Excel to JSON Payload Converter")
 
+# --- Integration Toggle ---
+enable_impact = st.toggle("Enable GCR Service Impact")
+
 # --- File Upload ---
 uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 
@@ -35,52 +38,52 @@ if uploaded_file:
 
     df = df.fillna("null").astype(str)
 
-    # --- Expected Columns and Mapping ---
-    expected_columns = {
-        "SID": "sid",
-        "Alt SID": "altSid",
-        "Busorg ID": "busorgId",
-        "Busorg Name": "busorgName",
-        "Protection": "protection",
-        "Bandwidth": "bandwidth",
-        "Product": "product",
-        "Product Family": "productFamily",
-        "A End CLLI": "getaEndClli",
-        "Z End CLLI": "getzEndClli",
-        "TSP Code": "tspCode",
-        "Affected Object Name": "afftectedObjectName",
-        "Order Number": "orderNum",
-        "Alt Acct Id": "altAcctId",
-        "Alt Acct Type": "altAcctType",
-        "Notification Name": "notificationName"
-    }
+    if enable_impact:
+        # --- Expected Columns and Mapping ---
+        expected_columns = {
+            "SID": "sid",
+            "Alt SID": "altSid",
+            "Busorg ID": "busorgId",
+            "Busorg Name": "busorgName",
+            "Protection": "protection",
+            "Bandwidth": "bandwidth",
+            "Product": "product",
+            "Product Family": "productFamily",
+            "A End CLLI": "getaEndClli",
+            "Z End CLLI": "getzEndClli",
+            "TSP Code": "tspCode",
+            "Affected Object Name": "afftectedObjectName",
+            "Order Number": "orderNum",
+            "Alt Acct Id": "altAcctId",
+            "Alt Acct Type": "altAcctType",
+            "Notification Name": "notificationName"
+        }
 
-    # Rename columns if they exist
-    df = df.rename(columns={k: v for k, v in expected_columns.items() if k in df.columns})
+        # Rename columns if they exist
+        df = df.rename(columns={k: v for k, v in expected_columns.items() if k in df.columns})
 
-    # Add missing columns with default value "null"
-    for original_col, new_col in expected_columns.items():
-        if new_col not in df.columns:
-            df[new_col] = "null"
+        # Add missing columns with default value "null"
+        for original_col, new_col in expected_columns.items():
+            if new_col not in df.columns:
+                df[new_col] = "null"
 
-    # --- Row Cleaning Function for Impact Format ---
-    def clean_row(row):
-        if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
-            row["busorgId"] = "1-E9U2L"
-        if row.get("sid", "").isnumeric():
-            row["sid"] = "1-E9U2L"
-        row["protection"] = row["protection"].lower() == "true"
-        for field in ["altAcctId", "orderNum", "tspCode"]:
-            try:
-                row[field] = int(row[field]) if row[field] != "null" else "null"
-            except:
-                row[field] = "null"
-        return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
+        # --- Row Cleaning Function for Impact Format ---
+        def clean_row(row):
+            if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
+                row["busorgId"] = "1-E9U2L"
+            if row.get("sid", "").isnumeric():
+                row["sid"] = "1-E9U2L"
+            row["protection"] = row["protection"].lower() == "true"
+            for field in ["altAcctId", "orderNum", "tspCode"]:
+                try:
+                    row[field] = int(row[field]) if row[field] != "null" else "null"
+                except:
+                    row[field] = "null"
+            return {k: v if isinstance(v, (bool, int)) else v for k, v in row.items()}
 
-    # --- Payload Generation ---
-    if "busorgId" in df.columns:
         impacts = [clean_row(row) for _, row in df.iterrows()]
         payload = {"importGcrImpactsRequest": {"impacts": impacts}}
+
     else:
         payload = df.to_dict(orient="records")
 
