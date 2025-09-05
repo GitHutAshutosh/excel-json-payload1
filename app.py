@@ -1,3 +1,5 @@
+# Save this as excel_to_json_converter.py
+
 import streamlit as st
 import pandas as pd
 import json
@@ -10,7 +12,6 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    # Moving Payload Converter Line (only on password page)
     st.markdown("""
     <style>
     .marquee {
@@ -30,11 +31,6 @@ if not st.session_state.authenticated:
         0%   { transform: translateX(100%); }
         100% { transform: translateX(-100%); }
     }
-
-    /* Global page base for password screen */
-    body, .stApp { background-color: #f5f5f5; color: #000; }
-
-    /* QA TEAM heading */
     .qa-banner {
         text-align: center;
         font-size: 28px;
@@ -43,43 +39,28 @@ if not st.session_state.authenticated:
         letter-spacing: .5px;
         margin: 2px 0 6px 0;
     }
-
-    /* Auth area tweaks (move a bit upward, center the field) */
     .auth { margin-top: -8px; }
     .auth .stTextInput { max-width: 520px; margin: 2px auto 8px auto; }
-
-    /* Make the "Type your Access Password" label clearer */
     .auth label {
         font-weight: 600 !important;
         color: #0d47a1 !important;
     }
-
-    /* DEFAULT STATE — highlight BEFORE typing/clicking */
     .auth .stTextInput input {
         font-size: 18px !important;
         padding: 12px 14px !important;
-        border: 2px solid #1e88e5 !important;       /* blue border by default */
+        border: 2px solid #1e88e5 !important;
         border-radius: 12px !important;
         background: #ffffff !important;
         color: #0a0a0a !important;
-        /* subtle blue glow by default to make it stand out before typing */
-        box-shadow:
-            0 8px 20px rgba(30,136,229,.08),
-            0 0 0 3px rgba(30,136,229,.12) !important;
+        box-shadow: 0 8px 20px rgba(30,136,229,.08), 0 0 0 3px rgba(30,136,229,.12) !important;
         transition: box-shadow .2s ease, border-color .2s ease !important;
     }
-
-    /* FOCUS or HAS VALUE — change to green accent once user interacts/types */
     .auth .stTextInput input:focus,
     .auth .stTextInput input:not(:placeholder-shown) {
         outline: none !important;
-        border-color: #43a047 !important; /* professional green */
-        box-shadow:
-            0 10px 24px rgba(67,160,71,.15),
-            0 0 0 4px rgba(67,160,71,.14) !important;
+        border-color: #43a047 !important;
+        box-shadow: 0 10px 24px rgba(67,160,71,.15), 0 0 0 4px rgba(67,160,71,.14) !important;
     }
-
-    /* Footer – clean & professional */
     .app-footer {
         margin-top: 18px;
         text-align: center;
@@ -101,13 +82,11 @@ if not st.session_state.authenticated:
     <div class="marquee">🚀 Payload Converter</div>
     """, unsafe_allow_html=True)
 
-    # Header + Auth UI (NO extra box under QA TEAM)
     st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
     st.markdown('<div class="auth">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
 
-    # Highlighted password input (styled via CSS above)
     password = st.text_input("Type your Access Password", type="password", placeholder="Enter your password")
 
     if password == "Ashutosh@79836666":
@@ -116,7 +95,6 @@ if not st.session_state.authenticated:
     elif password:
         st.error("❌ Incorrect password. Please try again.")
 
-    # Footer (clean + professional)
     st.markdown("""
         <div class="app-footer">
             <div class="divider"></div>
@@ -124,11 +102,10 @@ if not st.session_state.authenticated:
         </div>
     """, unsafe_allow_html=True)
 
-    # Close auth container
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Theme Toggle (only after login) ---
+# --- Theme Toggle ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
 st.session_state.theme = theme
 
@@ -142,14 +119,10 @@ if theme == "Dark":
     .stTextInput > div > input { background-color: #2c2c2c; color: #e0e0e0; }
     .stDownloadButton button { background-color: #333; color: #fff; }
     footer { color: #aaa; }
-
-    /* QA TEAM in dark */
     .qa-banner {
         text-align: center; font-size: 28px; font-weight: 800;
         color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b; margin-bottom: 10px;
     }
-
-    /* --- NEW: Glow Blue for Map Columns title (dark mode only) --- */
     .map-columns-title {
         color: #64b5f6;
         text-shadow: 0 0 8px #64b5f6, 0 0 16px rgba(100,181,246,.55);
@@ -157,8 +130,6 @@ if theme == "Dark":
         letter-spacing: .2px;
         margin: 8px 0 6px;
     }
-
-    /* --- NEW: Sheet Name Badge with glow (dark mode only) --- */
     .sheet-badge {
         display: inline-block;
         margin: 6px 0 14px 0;
@@ -170,6 +141,13 @@ if theme == "Dark":
         box-shadow: 0 0 12px rgba(100,181,246,.65);
         font-weight: 700;
     }
+    .file-name-glow {
+        font-size: 16px;
+        font-weight: 700;
+        color: #90caf9;
+        text-shadow: 0 0 6px #90caf9, 0 0 12px rgba(144,202,249,.6);
+        margin-bottom: 10px;
+    }
     </style>
     """, unsafe_allow_html=True)
 else:
@@ -179,14 +157,10 @@ else:
     .sidebar .sidebar-content { background-color: #ffffff; color: #000; }
     .toggle-status { color: #1b5e20; }
     footer { color: #555; }
-
-    /* QA TEAM in light */
     .qa-banner {
         text-align: center; font-size: 28px; font-weight: 800;
         color: #1976d2; margin-bottom: 10px; letter-spacing: .5px;
     }
-
-    /* Light mode – keep clean without glow */
     .map-columns-title {
         color: #0d47a1;
         font-weight: 800;
@@ -202,6 +176,12 @@ else:
         color: #0d47a1;
         background: #e3f2fd;
         font-weight: 700;
+    }
+    .file-name-glow {
+        font-size: 16px;
+        font-weight: 700;
+        color: #0d47a1;
+        margin-bottom: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -225,11 +205,10 @@ with st.sidebar:
 st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
 st.title("📊 Excel to JSON Payload Converter")
 
-# --- File Upload ---
 uploaded_file = st.file_uploader("", type=["xlsx"])
 
 if uploaded_file:
-    # Get sheet name(s) and parse first sheet
+    st.markdown(f"<div class='file-name-glow'>📁 Uploaded File: <strong>{uploaded_file.name}</strong></div>", unsafe_allow_html=True)
     try:
         xls = pd.ExcelFile(uploaded_file)
         sheet_names = xls.sheet_names
@@ -239,7 +218,6 @@ if uploaded_file:
         st.error(f"Error reading Excel file: {e}")
         st.stop()
 
-    # --- NEW: Show sheet name as a glowy badge (dark mode only; styled via CSS) ---
     st.markdown(f"<div class='sheet-badge'>📄 Sheet: <strong>{first_sheet}</strong></div>", unsafe_allow_html=True)
 
     df = df.fillna("null").astype(str)
@@ -247,7 +225,6 @@ if uploaded_file:
     st.subheader("🔍 Preview Excel Data")
     st.dataframe(df.head(10), use_container_width=True)
 
-    # --- Impact payload path ---
     if enable_impact:
         expected_columns = {
             "SID": "sid", "Alt SID": "altSid", "Busorg ID": "busorgId", "Busorg Name": "busorgName",
@@ -263,7 +240,6 @@ if uploaded_file:
                 df[new_col] = "null"
 
         def clean_row(row):
-            # Normalize values per your earlier rules
             if pd.isna(row.get("busorgId")) or str(row["busorgId"]).lower().startswith("null") or str(row["busorgId"]).isnumeric():
                 row["busorgId"] = "1-E9U2L"
             if str(row.get("sid", "")).isnumeric():
@@ -279,9 +255,7 @@ if uploaded_file:
         impacts = [clean_row(row) for _, row in df.iterrows()]
         payload = {"importGcrImpactsRequest": {"impacts": impacts}}
     else:
-        # --- NEW: Glow blue heading for Map Columns (dark mode only; CSS above) ---
         st.markdown("<h3 class='map-columns-title'>🛠️ Optional: Map Columns to JSON Keys</h3>", unsafe_allow_html=True)
-
         column_mapping = {}
         for col in df.columns:
             new_key = st.text_input(f"Map column '{col}' to JSON key", value=col, key=f"map_{col}")
@@ -302,7 +276,6 @@ if uploaded_file:
         st.session_state.clear()
         st.rerun()
 else:
-    # Upload section divider/title (unchanged)
     if theme == "Dark":
         st.markdown("""
         <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
