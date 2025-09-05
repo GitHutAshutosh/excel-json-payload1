@@ -5,7 +5,7 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="wide")
 
-# --- Custom CSS for Styling ---
+# --- Custom CSS ---
 st.markdown("""
     <style>
     .main {
@@ -22,19 +22,17 @@ st.markdown("""
         margin-top: 50px;
     }
     .sidebar-content {
-        padding: 10px;
         background-color: #e3f2fd;
+        padding: 15px;
         border-radius: 10px;
-        margin-top: 20px;
-    }
-    .sidebar-toggle {
-        font-weight: bold;
-        color: #0d47a1;
+        margin-top: 10px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
     .toggle-status {
         font-size: 14px;
         margin-top: 10px;
         color: #1b5e20;
+        font-weight: bold;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -55,11 +53,11 @@ if not st.session_state.authenticated:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# --- Sidebar (Collapsible by default using expander) ---
+# --- Sidebar (Collapsed by default using expander) ---
 with st.sidebar:
-    with st.expander("⚙️ Settings", expanded=False):
+    with st.expander("⚙️ GCR Settings", expanded=False):
         st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
-        enable_impact = st.toggle("Enable GCR Service Impact", value=False, key="impact_toggle")
+        enable_impact = st.toggle("🔄 Enable GCR Service Impact", value=False, key="impact_toggle")
         if enable_impact:
             st.markdown('<div class="toggle-status">✅ Impact Enabled</div>', unsafe_allow_html=True)
         else:
@@ -88,35 +86,19 @@ if uploaded_file:
     df = df.fillna("null").astype(str)
 
     if enable_impact:
-        # --- Expected Columns and Mapping ---
         expected_columns = {
-            "SID": "sid",
-            "Alt SID": "altSid",
-            "Busorg ID": "busorgId",
-            "Busorg Name": "busorgName",
-            "Protection": "protection",
-            "Bandwidth": "bandwidth",
-            "Product": "product",
-            "Product Family": "productFamily",
-            "A End CLLI": "getaEndClli",
-            "Z End CLLI": "getzEndClli",
-            "TSP Code": "tspCode",
-            "Affected Object Name": "afftectedObjectName",
-            "Order Number": "orderNum",
-            "Alt Acct Id": "altAcctId",
-            "Alt Acct Type": "altAcctType",
-            "Notification Name": "notificationName"
+            "SID": "sid", "Alt SID": "altSid", "Busorg ID": "busorgId", "Busorg Name": "busorgName",
+            "Protection": "protection", "Bandwidth": "bandwidth", "Product": "product",
+            "Product Family": "productFamily", "A End CLLI": "getaEndClli", "Z End CLLI": "getzEndClli",
+            "TSP Code": "tspCode", "Affected Object Name": "afftectedObjectName", "Order Number": "orderNum",
+            "Alt Acct Id": "altAcctId", "Alt Acct Type": "altAcctType", "Notification Name": "notificationName"
         }
 
-        # Rename columns if they exist
         df = df.rename(columns={k: v for k, v in expected_columns.items() if k in df.columns})
-
-        # Add missing columns with default value "null"
         for original_col, new_col in expected_columns.items():
             if new_col not in df.columns:
                 df[new_col] = "null"
 
-        # --- Row Cleaning Function for Impact Format ---
         def clean_row(row):
             if row.get("busorgId", "").upper().startswith("NULL") or row["busorgId"].isnumeric():
                 row["busorgId"] = "1-E9U2L"
@@ -136,8 +118,10 @@ if uploaded_file:
     else:
         payload = df.to_dict(orient="records")
 
-    # --- Display and Download ---
     st.subheader("📥 Converted JSON Payload")
     st.json(payload)
 
-   
+    json_bytes = json.dumps(payload, indent=4).encode("utf-8")
+    st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
+
+st.markdown('</div>', unsafe_allow_html=True)
