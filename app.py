@@ -35,12 +35,9 @@ st.markdown("""
     font-weight: bold;
 }
 footer {
-    position: fixed;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
     font-size: 16px;
     color: #555;
+    margin-top: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -52,7 +49,6 @@ if "authenticated" not in st.session_state:
 if not st.session_state.authenticated:
     st.markdown('<div class="password-box">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
-    st.caption("Please enter your access password below to continue.")
     st.header("🔐 Secure Access")
     password = st.text_input("Type your Access Password", type="password")
     if password == "Ashutosh@79836666":
@@ -60,8 +56,8 @@ if not st.session_state.authenticated:
         st.rerun()
     elif password:
         st.error("❌ Incorrect password. Please try again.")
-    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('<footer>Developed by Ashutosh Rana ❤️</footer>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- Sidebar (Collapsed by default using expander) ---
@@ -130,4 +126,3 @@ if uploaded_file:
     st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
 
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('<footer>Developed by Ashutosh Rana ❤️</footer>', unsafe_allow_html=True)
