@@ -5,22 +5,72 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
-# --- Theme Styling ---
+# --- Password Protection ---
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+    st.markdown("""
+    <style>
+    body, .stApp {
+        background-color: #f5f5f5;
+        color: #000;
+    }
+    .password-box {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-top: 20px;
+    }
+    footer {
+        font-size: 16px;
+        color: #555;
+        margin-top: 10px;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="password-box">', unsafe_allow_html=True)
+    st.subheader("👋 Welcome!")
+    st.header("🔐 Secure Access")
+    password = st.text_input("Type your Access Password", type="password")
+    if password == "Ashutosh@79836666":
+        st.session_state.authenticated = True
+        st.rerun()
+    elif password:
+        st.error("❌ Incorrect password. Please try again.")
+    st.markdown('<footer>Developed by Ashutosh Rana ❤️</footer>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop()
+
+# --- Theme Toggle (Only after login) ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
 
+# --- Apply Theme Styling ---
 if theme == "Dark":
     st.markdown("""
     <style>
     body, .main, .stApp {
-        background-color: #1e1e1e;
-        color: #ffffff;
+        background-color: #121212;
+        color: #e0e0e0;
     }
-    .password-box, .sidebar .sidebar-content {
-        background-color: #2c2c2c;
-        color: #ffffff;
+    .sidebar .sidebar-content, .password-box {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
     }
     .toggle-status {
         color: #81c784;
+    }
+    .stTextInput > div > input {
+        background-color: #2c2c2c;
+        color: #e0e0e0;
+    }
+    .stDownloadButton button {
+        background-color: #333;
+        color: #fff;
     }
     footer {
         color: #aaa;
@@ -34,7 +84,7 @@ else:
         background-color: #f5f5f5;
         color: #000000;
     }
-    .password-box, .sidebar .sidebar-content {
+    .sidebar .sidebar-content, .password-box {
         background-color: #ffffff;
         color: #000000;
     }
@@ -46,24 +96,6 @@ else:
     }
     </style>
     """, unsafe_allow_html=True)
-
-# --- Password Protection ---
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
-
-if not st.session_state.authenticated:
-    st.markdown('<div class="password-box">', unsafe_allow_html=True)
-    st.subheader("👋 Welcome!")
-    st.header("🔐 Secure Access")
-    password = st.text_input("Type your Access Password", type="password")
-    if password == "Ashutosh@79836666":
-        st.session_state.authenticated = True
-        st.rerun()
-    elif password:
-        st.error("❌ Incorrect password. Please try again.")
-    st.markdown('<footer>Developed by Ashutosh Rana ❤️</footer>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.stop()
 
 # --- Sidebar ---
 with st.sidebar:
