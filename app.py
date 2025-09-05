@@ -5,43 +5,47 @@ import json
 # --- Page Configuration ---
 st.set_page_config(page_title="Excel to JSON Converter", layout="centered")
 
-# --- Custom CSS ---
-st.markdown("""
-<style>
-.main {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-}
-.password-box {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    text-align: center;
-    margin-top: 20px;
-}
-.sidebar .sidebar-content {
-    background-color: #e3f2fd;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 10px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-.toggle-status {
-    font-size: 14px;
-    margin-top: 10px;
-    color: #1b5e20;
-    font-weight: bold;
-}
-footer {
-    font-size: 16px;
-    color: #555;
-    margin-top: 10px;
-    text-align: center;
-}
-</style>
-""", unsafe_allow_html=True)
+# --- Theme Styling ---
+theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
+
+if theme == "Dark":
+    st.markdown("""
+    <style>
+    body, .main, .stApp {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    .password-box, .sidebar .sidebar-content {
+        background-color: #2c2c2c;
+        color: #ffffff;
+    }
+    .toggle-status {
+        color: #81c784;
+    }
+    footer {
+        color: #aaa;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <style>
+    body, .main, .stApp {
+        background-color: #f5f5f5;
+        color: #000000;
+    }
+    .password-box, .sidebar .sidebar-content {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    .toggle-status {
+        color: #1b5e20;
+    }
+    footer {
+        color: #555;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- Password Protection ---
 if "authenticated" not in st.session_state:
@@ -72,7 +76,6 @@ with st.sidebar:
             st.markdown('<div class="toggle-status">❌ Impact Disabled</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    theme = st.radio("🎨 Theme", ["Light", "Dark"], index=0)
     if st.button("🔓 Logout"):
         st.session_state.authenticated = False
         st.rerun()
