@@ -1,5 +1,3 @@
-# Save this as excel_to_json_converter.py
-
 import streamlit as st
 import pandas as pd
 import json
@@ -83,7 +81,6 @@ if not st.session_state.authenticated:
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="qa-banner">QA TEAM</div>', unsafe_allow_html=True)
-    st.markdown('<div class="auth">', unsafe_allow_html=True)
     st.subheader("👋 Welcome!")
     st.header("🔐 Secure Access")
 
@@ -102,100 +99,17 @@ if not st.session_state.authenticated:
         </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- Theme Toggle ---
 theme = st.sidebar.radio("🎨 Theme", ["Light", "Dark"], index=0)
 st.session_state.theme = theme
 
-# --- Apply Theme Styling ---
-if theme == "Dark":
-    st.markdown("""
-    <style>
-    body, .main, .stApp { background-color: #121212; color: #e0e0e0; }
-    .sidebar .sidebar-content { background-color: #1e1e1e; color: #e0e0e0; }
-    .toggle-status { color: #81c784; }
-    .stTextInput > div > input { background-color: #2c2c2c; color: #e0e0e0; }
-    .stDownloadButton button { background-color: #333; color: #fff; }
-    footer { color: #aaa; }
-    .qa-banner {
-        text-align: center; font-size: 28px; font-weight: 800;
-        color: #ffeb3b; text-shadow: 0 0 8px #ffeb3b; margin-bottom: 10px;
-    }
-    .map-columns-title {
-        color: #64b5f6;
-        text-shadow: 0 0 8px #64b5f6, 0 0 16px rgba(100,181,246,.55);
-        font-weight: 800;
-        letter-spacing: .2px;
-        margin: 8px 0 6px;
-    }
-    .sheet-badge {
-        display: inline-block;
-        margin: 6px 0 14px 0;
-        padding: 6px 12px;
-        border-radius: 999px;
-        border: 1px solid #64b5f6;
-        color: #bbdefb;
-        background: rgba(25,118,210,.15);
-        box-shadow: 0 0 12px rgba(100,181,246,.65);
-        font-weight: 700;
-    }
-    .file-name-glow {
-        font-size: 16px;
-        font-weight: 700;
-        color: #90caf9;
-        text-shadow: 0 0 6px #90caf9, 0 0 12px rgba(144,202,249,.6);
-        margin-bottom: 10px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <style>
-    body, .main, .stApp { background-color: #f5f5f5; color: #000; }
-    .sidebar .sidebar-content { background-color: #ffffff; color: #000; }
-    .toggle-status { color: #1b5e20; }
-    footer { color: #555; }
-    .qa-banner {
-        text-align: center; font-size: 28px; font-weight: 800;
-        color: #1976d2; margin-bottom: 10px; letter-spacing: .5px;
-    }
-    .map-columns-title {
-        color: #0d47a1;
-        font-weight: 800;
-        letter-spacing: .2px;
-        margin: 8px 0 6px;
-    }
-    .sheet-badge {
-        display: inline-block;
-        margin: 6px 0 14px 0;
-        padding: 6px 12px;
-        border-radius: 999px;
-        border: 1px solid #90caf9;
-        color: #0d47a1;
-        background: #e3f2fd;
-        font-weight: 700;
-    }
-    .file-name-glow {
-        font-size: 16px;
-        font-weight: 700;
-        color: #0d47a1;
-        margin-bottom: 10px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # --- Sidebar ---
 with st.sidebar:
     with st.expander("⚙️ GCR Settings", expanded=False):
-        st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
         enable_impact = st.toggle("🔄 Enable GCR Service Impact", value=False, key="impact_toggle")
-        if enable_impact:
-            st.markdown('<div class="toggle-status">✅ Impact Enabled</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="toggle-status">❌ Impact Disabled</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(f"<div class='toggle-status'>{'✅ Impact Enabled' if enable_impact else '❌ Impact Disabled'}</div>", unsafe_allow_html=True)
 
     if st.button("🔓 Logout"):
         st.session_state.authenticated = False
@@ -262,6 +176,8 @@ if uploaded_file:
             column_mapping[col] = new_key
         df = df.rename(columns=column_mapping)
         payload = df.to_dict(orient="records")
+        if isinstance(payload, list) and len(payload) == 1:
+            payload = payload[0]
 
     st.subheader("📥 Converted JSON Payload")
     st.json(payload)
@@ -272,19 +188,29 @@ if uploaded_file:
     except Exception as e:
         st.error(f"Error generating JSON: {e}")
 
+    st.markdown("### 🧪 Validate JSON Input")
+    input_text = st.text_area("Paste JSON or text to validate", height=200)
+    if input_text:
+        col1, col2 = st.columns(2)
+        with col1:
+            try:
+                json.loads(input_text)
+                st.success("✅ No errors found in input.")
+            except Exception as e:
+                st.error(f"❌ Error in input: {e}")
+        with col2:
+            try:
+                parsed = json.loads(input_text)
+                st.json(parsed)
+            except:
+                st.warning("⚠️ Cannot display JSON due to errors.")
+
     if st.button("🧹 Clear Uploaded File"):
         st.session_state.clear()
         st.rerun()
 else:
-    if theme == "Dark":
-        st.markdown("""
-        <div style="border-top: 1px solid white; margin-top: 30px; padding-top: 10px;">
-            <h4 style='color: #64b5f6;'>📁 Upload your Excel file</h4>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-        <div style="border-top: 1px solid #ccc; margin-top: 30px; padding-top: 10px;">
-            <h4 style='color: #000;'>📁 Upload your Excel file</h4>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style="border-top: 1px solid #ccc; margin-top: 30px; padding-top: 10px;">
+        <h4 style='color: #000;'>📁 Upload your Excel file</h4>
+    </div>
+    """, unsafe_allow_html=True)
