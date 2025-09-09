@@ -109,6 +109,7 @@ st.session_state.theme = theme
 with st.sidebar:
     with st.expander("⚙️ GCR Settings", expanded=False):
         enable_impact = st.toggle("🔄 Enable GCR Service Impact", value=False, key="impact_toggle")
+        enable_json_validator = st.toggle("🧪 Enable JSON Validator", value=False, key="validator_toggle")
         st.markdown(f"<div class='toggle-status'>{'✅ Impact Enabled' if enable_impact else '❌ Impact Disabled'}</div>", unsafe_allow_html=True)
 
     if st.button("🔓 Logout"):
@@ -124,7 +125,7 @@ uploaded_file = st.file_uploader("", type=["xlsx"])
 if uploaded_file:
     st.markdown(f"<div class='file-name-glow'>📁 Uploaded File: <strong>{uploaded_file.name}</strong></div>", unsafe_allow_html=True)
     try:
-        xls = pd.ExcelFile(uploaded_file)
+        xls = pd.ExcelFile(uploaded_file, engine="openpyxl")
         sheet_names = xls.sheet_names
         first_sheet = sheet_names[0] if sheet_names else "Sheet1"
         df = xls.parse(first_sheet)
@@ -175,9 +176,11 @@ if uploaded_file:
             new_key = st.text_input(f"Map column '{col}' to JSON key", value=col, key=f"map_{col}")
             column_mapping[col] = new_key
         df = df.rename(columns=column_mapping)
-        payload = df.to_dict(orient="records")
-        if isinstance(payload, list) and len(payload) == 1:
-            payload = payload[0]
+        records = df.to_dict(orient="records")
+        if len(records) == 1:
+            payload = records[0]
+        else:
+            payload = {f"record_{i+1}": rec for i, rec in enumerate(records)}
 
     st.subheader("📥 Converted JSON Payload")
     st.json(payload)
@@ -188,22 +191,23 @@ if uploaded_file:
     except Exception as e:
         st.error(f"Error generating JSON: {e}")
 
-    st.markdown("### 🧪 Validate JSON Input")
-    input_text = st.text_area("Paste JSON or text to validate", height=200)
-    if input_text:
-        col1, col2 = st.columns(2)
-        with col1:
-            try:
-                json.loads(input_text)
-                st.success("✅ No errors found in input.")
-            except Exception as e:
-                st.error(f"❌ Error in input: {e}")
-        with col2:
-            try:
-                parsed = json.loads(input_text)
-                st.json(parsed)
-            except:
-                st.warning("⚠️ Cannot display JSON due to errors.")
+    if not enable_impact and enable_json_validator:
+        st.markdown("### 🧪 Validate JSON Input")
+        input_text = st.text_area("Paste JSON or text to validate", height=200)
+        if input_text:
+            col1, col2 = st.columns(2)
+            with col1:
+                try:
+                    json.loads(input_text)
+                    st.success("✅ No errors found in input.")
+                except Exception as e:
+                    st.error(f"❌ Error in input: {e}")
+            with col2:
+                try:
+                    parsed = json.loads(input_text)
+                    st.json(parsed)
+                except:
+                    st.warning("⚠️ Cannot display JSON due to errors.")
 
     if st.button("🧹 Clear Uploaded File"):
         st.session_state.clear()
