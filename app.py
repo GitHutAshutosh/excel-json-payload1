@@ -87,19 +87,3 @@ if uploaded_file:
 
     json_bytes = json.dumps(payload, indent=4).encode("utf-8")
     st.download_button("Download JSON", data=json_bytes, file_name="output.json", mime="application/json")
-
-# --- New Feature: Convert Text to JSON ---
-st.title("Text to JSON Converter")
-
-text_input = st.text_area("Paste your text here to convert into JSON")
-
-if text_input:
-    try:
-        parsed_json = json.loads(text_input)
-        st.success("Valid JSON detected!")
-        st.json(parsed_json)
-        json_bytes = json.dumps(parsed_json, indent=4).encode("utf-8")
-        st.download_button("Download Converted JSON", data=json_bytes, file_name="converted_text.json", mime="application/json")
-    except json.JSONDecodeError as e:
-        error_line = e.lineno
-        st.error(f"Issue detected in line {error_line}: {e.msg}. Please fix this issue and try again.")
